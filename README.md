@@ -57,7 +57,7 @@ You can create your object and follow all this example.
 # GENRATING BORDEREAU 
 bordarray = %w(6C14325660897 8R49974797470 6C12363204744 8R42972003544)
 bordereau = Colissimo::Bordereau.new
-bordereau.generateBordereauxByParcelNumbers(bordarray) => take an array
+bordereau.generateBordereauxByParcelNumbers(bordarray) #=> take an array of tracking number
 #=> Create a Bordereau.pdf label in root folder of your project
 
 
