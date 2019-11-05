@@ -51,8 +51,8 @@ end
 
 #### Next :
 
-You can create your object
-You can follow all this example
+You can create your object and follow all this example.
+###### In `test.rb` file, have example, quite same as following
 ```ruby
 # GENRATING BORDEREAU 
 bordarray = %w(6C14325660897 8R49974797470 6C12363204744 8R42972003544)
