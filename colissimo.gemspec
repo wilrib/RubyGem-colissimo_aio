@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "colissimo/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "colissimo"
+  spec.name          = "colissimo_AIO"
   spec.version       = Colissimo::VERSION
   spec.authors       = ["wilrib"]
   spec.email         = ["willy91330@gmail.com"]

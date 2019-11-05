@@ -15,7 +15,7 @@ TODO:
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'colissimo'
+gem 'colissimo_AIO'
 ```
 
 And then execute:
@@ -24,7 +24,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install colissimo
+    $ gem install colissimo_AIO
 
 ## Usage
 
