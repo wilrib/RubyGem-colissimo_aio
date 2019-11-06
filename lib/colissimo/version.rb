@@ -1,3 +1,3 @@
-module Colissimo
-  VERSION = '1.0.1'.freeze
+module ColissimoAIO
+  VERSION = '1.0.15'.freeze
 end

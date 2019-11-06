@@ -4,11 +4,11 @@ require "colissimo/version"
 
 Gem::Specification.new do |spec|
   spec.name = "colissimo_AIO"
-  spec.version = Colissimo::VERSION
+  spec.version = ColissimoAIO::VERSION
   spec.authors = ["wilrib"]
   spec.email = ["willy91330@gmail.com"]
 
-  spec.summary = %q{Write a short summary, because RubyGems requires one.}
+  spec.summary = %q(Write a short summary, because RubyGems requires one.)
   spec.description = %q{Generate Colissimo label for France in DPL/ZPL/PDF format (Colissimo webservice account required)
 Generate Bordereau
 Return all informations about a Relay Point.

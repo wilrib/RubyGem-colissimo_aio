@@ -33,7 +33,7 @@ Or install it yourself as:
 You have to configure Colissimo Gem with your colissimo account, compagny information, and specific information about generated label.
 
 ```ruby
-Colissimo.configure do |config|
+ColissimoAIO.configure do |config|
   config.account = '12345678'
   config.password = 'MyPassword'
   config.company_name = 'Company'
@@ -56,20 +56,20 @@ You can create your object and follow all this example.
 ```ruby
 # GENRATING BORDEREAU 
 bordarray = %w(6C14325660897 8R49974797470 6C12363204744 8R42972003544)
-bordereau = Colissimo::Bordereau.new
+bordereau = ColissimoAIO::Deposit.new
 bordereau.generateBordereauxByParcelNumbers(bordarray) #=> take an array of tracking number
 #=> Create a Bordereau.pdf label in root folder of your project
 
 
 # RELAY POINT INFORMATION
-retrait = Colissimo::PointRetrait.new
-retrait.find_point_retrait_address(relay_point_id)
+retrait = ColissimoAIO::RelayPoint.new
+retrait.find_relay_point_informations(relay_point_id)
 #=> Return string with all informations about a Relay Point
 
 
 # GENERATING SHIPPING LABEL
-aller = Colissimo::Label.new
-aller.colis_aller(customer_first_name, customer_last_name, 
+aller = ColissimoAIO::Label.new
+aller.shipping_label(customer_first_name, customer_last_name, 
                       customer_address, customer_country_code, 
                       customer_city, customer_zip, customer_email, 
                       label_format)
@@ -77,8 +77,8 @@ aller.colis_aller(customer_first_name, customer_last_name,
 
 
 # GENERATING RETURN SHIPPING LABEL
-retour = Colissimo::Label.new
-puts retour.colis_retour(customer_first_name, customer_last_name, 
+retour = ColissimoAIO::Label.new
+puts retour.return_label(customer_first_name, customer_last_name, 
                          customer_address, customer_country_code, 
                          customer_city, customer_zip, customer_email, 
                          label_format)
