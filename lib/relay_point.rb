@@ -20,8 +20,8 @@ module RelayPoint
         puts "Error: #{soap_fault}\n"
       end
       response_to_s = response.to_s
-      if response_to_s[/#{'<id>'}(.*?)#{'</id>'}/m, 1] != '0'
-        raise StandardError, (response_to_s[/#{'<messageContent>'}(.*?)#{'</messageContent>'}/m, 1]).to_s
+      if response_to_s[/#{'<errorCode>'}(.*?)#{'</errorCode>'}/m, 1] != '0'
+        raise StandardError, (response_to_s[/#{'<errorMessage>'}(.*?)#{'</errorMessage>'}/m, 1]).to_s
       else
         response_to_s
       end

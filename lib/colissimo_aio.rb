@@ -30,6 +30,6 @@ module ColissimoAIO
     yield(configuration)
   end
 
-  class Error < StandardError;
+  class Error < StandardError
   end
 end

@@ -53,12 +53,13 @@ module Label
       end
     end
 
-    def shipping_label(first_name, last_name, street, country, city, zip, email)
+    def shipping_label(first_name, last_name, street, country, city, zip, phone, email)
       address_expeditor = { lastName: first_name,
                             firstName: last_name,
                             line2: street, countryCode: country,
                             city: city,
                             zipCode: zip,
+                            mobileNumber: phone,
                             email: email }
       output_format = if @format == 'DPL_203'
                         i = "\x02n"
@@ -87,9 +88,6 @@ module Label
                          { productCode: 'DOS', depositDate: @depo_date }
                        else
                          { productCode: 'DOM', depositDate: @depo_date }
-                         #else
-                         #  weight = { weight: @label_weight }.merge(pickupLocationId: user.address.pickup_id.to_s)
-                         #  { productCode: 'BPR', depositDate: @depo_date }.merge(commercialName: Colissimo.configuration.company_name)
                        end
       weight = { weight: @label_weight }
       response = generate_label(address_expeditor, output_format, service_forman, weight, 'aller')
@@ -105,12 +103,13 @@ module Label
       end
     end
 
-    def return_label(first_name, last_name, street, country, city, zip, email)
+    def return_label(first_name, last_name, street, country, city, zip, phone, email)
       address_expeditor = { lastName: first_name,
                             firstName: last_name,
                             line2: street, countryCode: country,
                             city: city,
                             zipCode: zip,
+                            mobileNumber: phone,
                             email: email }
       output_format = if @format == 'DPL_203'
                         i = "\x02n"
@@ -136,12 +135,9 @@ module Label
                         raise ArgumentError, 'BAD FORMAT'
                       end
       service_forman = if @internationnal
-                         { productCode: 'CORE', depositDate: @depo_date }
-                       else
                          { productCode: 'CORI', depositDate: @depo_date }
-                         #else
-                         #  weight = { weight: @label_weight }.merge(pickupLocationId: user.address.pickup_id.to_s)
-                         #  { productCode: 'BPR', depositDate: @depo_date }.merge(commercialName: Colissimo.configuration.company_name)
+                       else
+                         { productCode: 'CORE', depositDate: @depo_date }
                        end
       weight = { weight: @label_weight }
       response = generate_label(address_expeditor, output_format, service_forman, weight, 'retour')
@@ -151,6 +147,52 @@ module Label
         regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
         etiquette = parcel_number[regex]
         etiquette_save(etiquette, colis_number, 'retour', @format)
+        return colis_number, etiquette
+      rescue => e
+        raise e
+      end
+    end
+
+    def relay_point_label(first_name, last_name, street, country, city, zip, phone, email, relay_id)
+      address_expeditor = { lastName: first_name,
+                            firstName: last_name,
+                            line2: street, countryCode: country,
+                            city: city,
+                            zipCode: zip,
+                            mobileNumber: phone,
+                            email: email }
+      output_format = if @format == 'DPL_203'
+                        i = "\x02n"
+                        j = "E\r"
+                        { outputPrintingType: ColissimoAIO.configuration.dpl_203 }
+                      elsif @format == 'DPL_300'
+                        i = "\x02n"
+                        j = "E\r"
+                        { outputPrintingType: ColissimoAIO.configuration.dpl_300 }
+                      elsif @format == 'PDF'
+                        i = '%PDF-'
+                        j = '%%EOF'
+                        { outputPrintingType: ColissimoAIO.configuration.pdf }
+                      elsif @format == 'ZPL_203'
+                        i = '^XA'
+                        j = '^XZ'
+                        { outputPrintingType: ColissimoAIO.configuration.zpl_203 }
+                      elsif @format == 'ZPL_300'
+                        i = '^XA'
+                        j = '^XZ'
+                        { outputPrintingType: ColissimoAIO.configuration.zpl_300 }
+                      else
+                        raise ArgumentError, 'BAD FORMAT'
+                      end
+      service_forman = { productCode: 'BPR', depositDate: @depo_date }.merge(commercialName: ColissimoAIO.configuration.company_name)
+      weight = { weight: @label_weight }.merge(pickupLocationId: relay_id)
+      response = generate_label(address_expeditor, output_format, service_forman, weight, 'aller')
+      parcel_number = response.to_s
+      colis_number = parcel_number[/#{'<parcelNumber>'}(.*?)#{'</parcelNumber>'}/m, 1]
+      begin
+        regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
+        etiquette = parcel_number[regex]
+        etiquette_save(etiquette, colis_number, 'aller', @format)
         return colis_number, etiquette
       rescue => e
         raise e
