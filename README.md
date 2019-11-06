@@ -3,12 +3,12 @@
 This is an unofficial Ruby Gem that allow you to:
 - Generate Colissimo Label in different format (DPL, ZPL and PDF) `(only france actually)`
 - Generate Bordereau Colissimo in PDF
-- Return all informations about a Pickup Point from his ID (address, opening hour, etc)
+- Return all informations about a Relay Point from his ID (address, opening hour, etc)
 
 TODO:
 - Generate Colissimo Label to other country `(in progress)`
 - Tracking information `(in progress)`
-- Generate Pickup Point Label
+- Generate Relay Point Label
 
 ## Installation
 
@@ -61,10 +61,10 @@ bordereau.generateBordereauxByParcelNumbers(bordarray) #=> take an array of trac
 #=> Create a Bordereau.pdf label in root folder of your project
 
 
-# PICKUP POINT INFORMATION
+# RELAY POINT INFORMATION
 retrait = Colissimo::PointRetrait.new
-retrait.find_point_retrait_address(pickup_point_id)
-#=> Return string with all informations about a Pickup Point
+retrait.find_point_retrait_address(relay_point_id)
+#=> Return string with all informations about a Relay Point
 
 
 # GENERATING SHIPPING LABEL
