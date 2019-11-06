@@ -144,13 +144,13 @@ module Colissimo
       weight = { weight: poid }
 
       response = generate_label(address_expeditor, output_format, service_forman, weight, 'aller')
-      # link = response.http.body
       parcel_number = response.to_s
       colis_number = parcel_number[/#{'<parcelNumber>'}(.*?)#{'</parcelNumber>'}/m, 1]
       begin
         regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
         etiquette = parcel_number[regex]
-        [etiquette_save(etiquette, colis_number, 'aller', format), colis_number]
+        etiquette_save(etiquette, colis_number, 'aller', format)
+        return colis_number, etiquette
       rescue => e
         raise e
       end
@@ -189,13 +189,13 @@ module Colissimo
       service_forman = { productCode: code, depositDate: @depo_date }
       weight = { weight: poid }
       response = generate_label(address_expeditor, output_format, service_forman, weight, 'retour')
-      # link = response.http.body
       parcel_number = response.to_s
       colis_number = parcel_number[/#{'<parcelNumber>'}(.*?)#{'</parcelNumber>'}/m, 1]
       begin
         regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
         etiquette = parcel_number[regex]
-        [etiquette_save(etiquette, colis_number, 'retour', format), colis_number]
+        etiquette_save(etiquette, colis_number, 'retour', format)
+        return colis_number, etiquette
       rescue => e
         raise e
       end
@@ -203,18 +203,55 @@ module Colissimo
 
     def etiquette_save(etiquette, colis_number, type, format)
       if format.include?('DPL')
-        final = Base64.encode64(etiquette).delete("\n")
+        # final = Base64.encode64(etiquette).delete("\n")
         extension = 'dpl'
       elsif format.include?('PDF')
-        final = etiquette.force_encoding('UTF-8')
+        etiquette = etiquette.force_encoding('UTF-8')
         extension = 'pdf'
       elsif format.include?('ZPL')
-        final = Base64.encode64(etiquette).delete("\n")
+        # final = Base64.encode64(etiquette).delete("\n")
         extension = 'zpl'
       else
         raise ArgumentError, 'BAD FORMAT'
       end
-      File.open("#{type}_#{colis_number}.#{extension}", 'w+') { |file| file.write(final) }
+      File.open("#{type}_#{colis_number}.#{extension}", 'w+') { |file| file.write(etiquette) }
+    end
+  end
+
+  class Tracking
+
+    def initialize
+      @suivis = Savon.client do |config|
+        config.wsdl Colissimo.configuration.suivi
+        config.encoding 'UTF-8'
+        config.ssl_version :TLSv1
+        config.headers 'SOAPAction' => ''
+      end
+      @auth = { accountNumber: Colissimo.configuration.account,
+                password: Colissimo.configuration.password }
+    end
+
+    def track(skybillNumber)
+      data = { skybillNumber: skybillNumber }
+      tracking = @suivis.call :track, message: @auth.merge(data) unless data.empty?
+      case tracking.xpath('//errorCode').first.inner_text
+      when '0'
+        return tracking.xpath('//eventLibelle').first.inner_text, tracking.xpath('//eventDate').first.inner_text, tracking.xpath('//recipientCity').first.inner_text
+      when '1000'
+        raise StandardError, 'Erreur système (erreur technique)'
+      when '202'
+        raise StandardError, 'Service non autorisé pour cet identifiant'
+      when '201'
+        raise StandardError, 'Identifiant / mot de passe invalide'
+      when '105'
+        raise StandardError, 'Numéro de colis inconnu'
+      when '104'
+        raise StandardError, 'Numéro de colis hors plage client'
+      when '103'
+        raise StandardError, 'Numéro de colis datant de plus de 30 jours'
+      when '101'
+        raise StandardError, 'Numéro de colis invalide'
+      end
     end
   end
 end
