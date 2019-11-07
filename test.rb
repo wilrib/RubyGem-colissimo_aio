@@ -1,5 +1,5 @@
 require 'dotenv/load'
-require 'colissimo_AIO'
+require 'colissimo_aio'
 
 # CONFIGURATION DE LA GEM
 ColissimoAIO.configure do |config|
@@ -25,9 +25,11 @@ depositArray = %w(6C14365610897 8R41974798470 6C14363208744 8R41972000544)
 deposit = ColissimoAIO::DepositClass.new
 deposit.generateBordereauxByParcelNumbers(depositArray)
 
+
 # INFO D'UN RELAY POINT
 relayPoint = ColissimoAIO::RelayPointClass.new
 p relayPoint.find_relay_point_informations('011430')
+
 
 # TRACKING INFORMATIONS
 tracking = ColissimoAIO::TrackingClass.new
@@ -41,12 +43,14 @@ shippingLabel.shipping_label('Alex', 'XELA',
                              'Paris', '75011',
                              '0660066006', 'test@gmail.com')
 
+
 # ETIQUETTE RETOUR
 returnLabel = ColissimoAIO::LabelClass.new
 returnLabel.return_label('Alex', 'XELA',
                          '12 Rue de la Roquette', 'FR',
                          'Paris', '75011', '0660066006',
                          'test@gmail.com')
+
 
 # ETIQUETTE ALLER RELAY POINT
 retour = ColissimoAIO::LabelClass.new
