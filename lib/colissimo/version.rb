@@ -1,3 +1,3 @@
 module ColissimoAIO
-  VERSION = '1.0.15'.freeze
+  VERSION = '1.0.0'.freeze
 end
