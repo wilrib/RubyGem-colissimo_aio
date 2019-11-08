@@ -104,7 +104,11 @@ relayLabel.relay_point_label('customer_first_name', 'customer_last_name',
                       'customer_email', 'relay_id') 
 #=> Create a local relay label and return it in specified format in root folder of your project if `raw_format = true`, else return an array with label in raw format + tracking number
 ```
+###### In both cases, if the label cannot be generated it raises a StandardError with the reason. Otherwise, the parcel number is returned and files saved in the specified folders.
 
+## Documentation
+Colissimo documentation can be found here:
+https://www.colissimo.entreprise.laposte.fr/system/files/imagescontent/docs/spec_ws_affranchissement.pdf
 
 ## Informations
 
