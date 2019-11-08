@@ -3,7 +3,7 @@ module ColissimoAIO
     attr_accessor :account, :password, :weight, :company_name,
                   :address, :country_code, :city, :zip_code, :phone,
                   :email, :format, :dpl_203, :dpl_300, :zpl_203, :zpl_300,
-                  :pdf, :retrait, :label, :suivi, :signed, :internationnal, :raw_format
+                  :pdf, :retrait, :label, :suivi, :signed, :international, :raw_format
 
     def initialize
       @account = nil
@@ -26,7 +26,7 @@ module ColissimoAIO
       @label = 'https://ws.colissimo.fr/sls-ws/SlsServiceWS?wsdl'
       @suivi = 'https://www.coliposte.fr/tracking-chargeur-cxf/TrackingServiceWS?wsdl'
       @signed ||= false
-      @internationnal ||= false
+      @international ||= false
       @raw_format ||= false
     end
   end
