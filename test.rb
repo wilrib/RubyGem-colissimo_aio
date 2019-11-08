@@ -12,52 +12,52 @@ ColissimoAIO.configure do |config|
   config.zip_code = ENV['ZIP_CODE']
   config.phone = ENV['PHONE']
   config.email = ENV['EMAIL']
-  config.format = 'PDF'
+  config.format = 'ZPL_203'
   config.weight = '5'
   config.signed = false
-  config.internationnal = false
+  config.international = false
   config.raw_format = false
 end
 
 
 # GENERATE DEPOSIT
-depositArray = %w(6C14365610897 8R41974798470 6C14363208744 8R41972000544)
-deposit = ColissimoAIO::DepositClass.new
-deposit.generateBordereauxByParcelNumbers(depositArray)
-
-
-# INFO D'UN RELAY POINT
-relayPoint = ColissimoAIO::RelayPointClass.new
-p relayPoint.find_relay_point_informations('011430')
-
-
-# TRACKING INFORMATIONS
-tracking = ColissimoAIO::TrackingClass.new
-p tracking.track('6C14365610897')
+#depositArray = %w(6C14365610897 8R41974798470 6C14363208744 8R41972000544)
+#deposit = ColissimoAIO::DepositClass.new
+#deposit.generateBordereauxByParcelNumbers(depositArray)
+#
+#
+## INFO D'UN RELAY POINT
+#relayPoint = ColissimoAIO::RelayPointClass.new
+#p relayPoint.find_relay_point_informations('011430')
+#
+#
+## TRACKING INFORMATIONS
+#tracking = ColissimoAIO::TrackingClass.new
+#p tracking.track('6C14365610897')
 
 
 # ETIQUETTE ALLER
-shippingLabel = ColissimoAIO::LabelClass.new
-shippingLabel.shipping_label('Alex', 'XELA',
-                             '12 Rue de la Roquette', 'FR',
-                             'Paris', '75011',
-                             '0660066006', 'test@gmail.com')
-
+#shippingLabel = ColissimoAIO::LabelClass.new
+#shippingLabel.shipping_label('Alex', 'XELA',
+#                             '12 Rue de la Roquette', 'FR',
+#                             'Paris', '75011',
+#                             '0660066006', 'test@gmail.com')
+#TODO: Plutot que faire un array faire un Hash key=>value
 
 # ETIQUETTE RETOUR
-returnLabel = ColissimoAIO::LabelClass.new
-returnLabel.return_label('Alex', 'XELA',
-                         '12 Rue de la Roquette', 'FR',
-                         'Paris', '75011', '0660066006',
-                         'test@gmail.com')
-
+#returnLabel = ColissimoAIO::LabelClass.new
+#returnLabel.return_label('Alex', 'XELA',
+#                         '12 Rue de la Roquette', 'FR',
+#                         'Paris', '75011', '0660066006',
+#                         'test@gmail.com')
+#TODO: Plutot que faire un array faire un Hash key=>value
 
 # ETIQUETTE ALLER RELAY POINT
-retour = ColissimoAIO::LabelClass.new
-retour.relay_point_label('Alex', 'XELA',
-                         '12 Rue de la Roquette', 'FR',
-                         'Paris', '75011', '0660066006',
-                         'test@gmail.com', '011430')
+#retour = ColissimoAIO::LabelClass.new
+#retour.relay_point_label('Alex', 'XELA',
+#                         '12 Rue de la Roquette', 'FR',
+#                         'Paris', '75011', '0660066006',
+#                         'test@gmail.com', '011430')
 
 # ETIQUETTE RETOUR RELAY POINT
 #retour = ColissimoAIO::LabelClass.new
