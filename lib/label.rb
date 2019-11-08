@@ -20,7 +20,7 @@ module Label
       @label_weight = ColissimoAIO.configuration.weight
       @signed = ColissimoAIO.configuration.signed
       @format = ColissimoAIO.configuration.format
-      @internationnal = ColissimoAIO.configuration.internationnal
+      @international = ColissimoAIO.configuration.international
     end
 
     def generate_label(address_expeditor, output_format, service_forman, parcel_new, type)
@@ -61,29 +61,10 @@ module Label
                             zipCode: zip,
                             mobileNumber: phone,
                             email: email }
-      output_format = if @format == 'DPL_203'
-                        i = "\x02n"
-                        j = "E\r"
-                        { outputPrintingType: ColissimoAIO.configuration.dpl_203 }
-                      elsif @format == 'DPL_300'
-                        i = "\x02n"
-                        j = "E\r"
-                        { outputPrintingType: ColissimoAIO.configuration.dpl_300 }
-                      elsif @format == 'PDF'
-                        i = '%PDF-'
-                        j = '%%EOF'
-                        { outputPrintingType: ColissimoAIO.configuration.pdf }
-                      elsif @format == 'ZPL_203'
-                        i = '^XA'
-                        j = '^XZ'
-                        { outputPrintingType: ColissimoAIO.configuration.zpl_203 }
-                      elsif @format == 'ZPL_300'
-                        i = '^XA'
-                        j = '^XZ'
-                        { outputPrintingType: ColissimoAIO.configuration.zpl_300 }
-                      else
-                        raise ArgumentError, 'BAD FORMAT'
-                      end
+      output_for = output
+      output_format = output_for[0]
+      i = output_for[1]
+      j = output_for[2]
       service_forman = if @signed
                          { productCode: 'DOS', depositDate: @depo_date }
                        else
@@ -111,30 +92,11 @@ module Label
                             zipCode: zip,
                             mobileNumber: phone,
                             email: email }
-      output_format = if @format == 'DPL_203'
-                        i = "\x02n"
-                        j = "E\r"
-                        { outputPrintingType: ColissimoAIO.configuration.dpl_203 }
-                      elsif @format == 'DPL_300'
-                        i = "\x02n"
-                        j = "E\r"
-                        { outputPrintingType: ColissimoAIO.configuration.dpl_300 }
-                      elsif @format == 'PDF'
-                        i = '%PDF-'
-                        j = '%%EOF'
-                        { outputPrintingType: ColissimoAIO.configuration.pdf }
-                      elsif @format == 'ZPL_203'
-                        i = '^XA'
-                        j = '^XZ'
-                        { outputPrintingType: ColissimoAIO.configuration.zpl_203 }
-                      elsif @format == 'ZPL_300'
-                        i = '^XA'
-                        j = '^XZ'
-                        { outputPrintingType: ColissimoAIO.configuration.zpl_300 }
-                      else
-                        raise ArgumentError, 'BAD FORMAT'
-                      end
-      service_forman = if @internationnal
+      output_for = output
+      output_format = output_for[0]
+      i = output_for[1]
+      j = output_for[2]
+      service_forman = if @international
                          { productCode: 'CORI', depositDate: @depo_date }
                        else
                          { productCode: 'CORE', depositDate: @depo_date }
@@ -161,6 +123,26 @@ module Label
                             zipCode: zip,
                             mobileNumber: phone,
                             email: email }
+      output_for = output
+      output_format = output_for[0]
+      i = output_for[1]
+      j = output_for[2]
+      service_forman = { productCode: 'BPR', depositDate: @depo_date }.merge(commercialName: ColissimoAIO.configuration.company_name)
+      weight = { weight: @label_weight }.merge(pickupLocationId: relay_id)
+      response = generate_label(address_expeditor, output_format, service_forman, weight, 'aller')
+      parcel_number = response.to_s
+      colis_number = parcel_number[/#{'<parcelNumber>'}(.*?)#{'</parcelNumber>'}/m, 1]
+      begin
+        regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
+        etiquette = parcel_number[regex]
+        etiquette_save(etiquette, colis_number, 'aller', @format)
+        return colis_number, etiquette
+      rescue => e
+        raise e
+      end
+    end
+
+    def output
       output_format = if @format == 'DPL_203'
                         i = "\x02n"
                         j = "E\r"
@@ -184,19 +166,7 @@ module Label
                       else
                         raise ArgumentError, 'BAD FORMAT'
                       end
-      service_forman = { productCode: 'BPR', depositDate: @depo_date }.merge(commercialName: ColissimoAIO.configuration.company_name)
-      weight = { weight: @label_weight }.merge(pickupLocationId: relay_id)
-      response = generate_label(address_expeditor, output_format, service_forman, weight, 'aller')
-      parcel_number = response.to_s
-      colis_number = parcel_number[/#{'<parcelNumber>'}(.*?)#{'</parcelNumber>'}/m, 1]
-      begin
-        regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
-        etiquette = parcel_number[regex]
-        etiquette_save(etiquette, colis_number, 'aller', @format)
-        return colis_number, etiquette
-      rescue => e
-        raise e
-      end
+      [output_format, i, j]
     end
 
     def etiquette_save(etiquette, colis_number, type, format)
