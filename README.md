@@ -44,12 +44,14 @@ ColissimoAIO.configure do |config|
   config.zip_code = '75001'
   config.phone = '0606060606'
   config.email = 'email@email.com'
-  config.format = 'PDF'               #=> Format accepted PDF, ZPL_203/ZPL_300, DPL_203/DPL_300
-  config.weight = '5'                 #=> weight in Kg of your package
-  config.signed = false/true          #=> signed shipping label or not
-  config.international = false/true  #=> international shipping label or not
-  config.raw_format = false/true      #=> if false, `label` method will return an array with ["label_in_raw_format", "tracking_number"] into
-                                      #=> if true, `label` method will create label_file.pdf/zpl/dpl and return an array with ["tracking_number"] into
+  config.format = 'PDF'                             #=> Format accepted PDF, ZPL_203/ZPL_300, DPL_203/DPL_300
+  config.weight = '5'                               #=> weight in Kg of your package
+  config.signed = false/true                        #=> signed shipping label or not
+  config.international = false/true                 #=> international shipping label or not
+  config.raw_format = false/true                    #=> if false, `label` method will return an array with ["label_in_raw_format", "tracking_number"] into
+                                                    #=> if true, `label` method will create label_file.pdf/zpl/dpl and return an array with ["tracking_number"] into
+  config.local_path = File.join('public',
+                                'colissimo_file')   #=> Specify the storage folder
 end
 ```
 
@@ -60,15 +62,15 @@ You can create your object and follow all this example.
 ###### In `test.rb` file, have example, quite same as following
 ```ruby
 # GENERATE DEPOSIT
-depositArray = %w(6C14365610897 8R41974798470 6C14363208744 8R41972000544)
+array = %w(6C14365610897 8R41974798470 6C14363208744 8R41972000544)
 deposit = ColissimoAIO::DepositClass.new
-deposit.generate_deposit(depositArray) #=> take an array of tracking number
+deposit.generate_deposit(array) #=> take an array of tracking number
 #=> Create a Bordereau.pdf file in root folder of your project
 
 
 # RELAY POINT INFORMATIONS
-relayPoint = ColissimoAIO::RelayPointClass.new
-relayPoint.find_relay_point_informations('011430')
+relay = ColissimoAIO::RelayPointClass.new
+relay.find_relay_point_informations('011430')
 #=> Return string with all informations about a Relay Point
 
 
@@ -79,29 +81,42 @@ tracking.track('6C14365610897')
 
  
 # GENERATING LOCAL SHIPPING LABEL
-shippingLabel = ColissimoAIO::LabelClass.new
-shippingLabel.shipping_label('customer_first_name', 'customer_last_name', 
-                             'customer_address', 'customer_country_code', 
-                             'customer_city', 'customer_zip', 'customer_phone_number',
-                             'customer_email')
+shipping = ColissimoAIO::LabelClass.new
+shipping.shipping_label(first_name: 'Axel',
+                        last_name: 'XELA',
+                        street: '12 Rue de la Roquette',
+                        country: 'FR',
+                        city: 'Paris',
+                        zip: '75001',
+                        phone: '0660066006',
+                        email: 'test@gmail.com')
 #=> Create a local shipping label and return it in specified format in root folder of your project if `raw_format = true`, else return an array with label in raw format + tracking number
 
 
 # GENERATING RETURN SHIPPING LABEL
 returnLabel = ColissimoAIO::LabelClass.new
-returnLabel.return_label('customer_first_name', 'customer_last_name', 
-                      'customer_address', 'customer_country_code', 
-                      'customer_city', 'customer_zip', 'customer_phone_number',
-                      'customer_email')
+returnLabel.return_label(first_name: 'Axel',
+                         last_name: 'XELA',
+                         street: '12 Rue de la Roquette',
+                         country: 'FR',
+                         city: 'Paris',
+                         zip: '75001',
+                         phone: '0660066006',
+                         email: 'test@gmail.com')
 #=> Create a local return shipping label and return it in specified format in root folder of your project if `raw_format = true`, else return an array with label in raw format + tracking number
 
 
 # GENERATING RELAY POINT SHIPPING LABEL
-relayLabel = ColissimoAIO::LabelClass.new
-relayLabel.relay_point_label('customer_first_name', 'customer_last_name', 
-                      'customer_address', 'customer_country_code', 
-                      'customer_city', 'customer_zip', 'customer_phone_number',
-                      'customer_email', 'relay_id') 
+relay = ColissimoAIO::LabelClass.new
+relay.relay_point_label(first_name: 'Axel',
+                        last_name: 'XELA',
+                        street: '12 Rue de la Roquette',
+                        country: 'FR',
+                        city: 'Paris',
+                        zip: '75001',
+                        phone: '0660066006',
+                        email: 'test@gmail.com',
+                        relay_id: '011430')
 #=> Create a local relay label and return it in specified format in root folder of your project if `raw_format = true`, else return an array with label in raw format + tracking number
 ```
 ###### In both cases, if the label cannot be generated it raises a StandardError with the reason. Otherwise, the parcel number is returned and files saved in the specified folders.
@@ -117,7 +132,7 @@ https://www.colissimo.entreprise.laposte.fr/system/files/imagescontent/docs/spec
 - `config.signed` : `true` if you want signed shipping label, else `false`
 - `config.internationnal` : `true` if you want international shipping label, else `false`
 - `config.raw_format` : if `false`, `label` method will return an array with ["label_in_raw_format", "tracking_number"] into, else `label` method will create label_file.pdf/zpl/dpl in root folder and return an array with ["tracking_number"] into
-
+- `config.local_path` : you can specify here the local storage of all files generated `File.join('public', 'colissimo_file') # Rails.root.join('public', 'colissimo_file')`
 
 
 ## Contributing
