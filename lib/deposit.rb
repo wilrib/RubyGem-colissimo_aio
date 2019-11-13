@@ -29,14 +29,6 @@ module Deposit
         final = response_body[/#{"%PDF-"}(.*)#{"%%EOF"}/m].force_encoding('UTF-8')
         save = Save::SaveClass.new(final, deposit_number, nil)
         save.saving
-
-        #basename = 'Bordereau.pdf'
-        #dirname = File.join(Dir.pwd, @local_path)
-        #FileUtils.mkpath dirname unless File.exist?(dirname)
-        #filename = File.join(dirname, basename)
-        #File.open(filename, 'a') do |file|
-        #  file.write(final)
-        #end
       end
     end
   end
