@@ -17,7 +17,7 @@ ColissimoAIO.configure do |config|
   config.signed = false
   config.international = false
   config.raw_format = false
-  config.local_path = File.join('public', 'colissimo_file') # //Rails.root.join('public', 'colissimo_file')
+  config.local_path = File.join('public', 'colissimo_file') # Rails.root.join('public', 'colissimo_file')
 end
 
 
