@@ -3,7 +3,7 @@ module Tracking
 
     def initialize
       @suivis = Savon.client do |config|
-        config.wsdl ColissimoAIO.configuration.suivi
+        config.wsdl ColissimoAIO.configuration.tracking_url
         config.encoding 'UTF-8'
         config.ssl_version :TLSv1
         config.headers 'SOAPAction' => ''

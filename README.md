@@ -16,7 +16,7 @@ TODO:
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'colissimo_AIO'
+gem 'colissimo_aio'
 ```
 
 And then execute:
@@ -25,7 +25,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install colissimo_AIO
+    $ gem install colissimo_aio
 
 ## Usage
 
@@ -47,7 +47,7 @@ ColissimoAIO.configure do |config|
   config.format = 'PDF'               #=> Format accepted PDF, ZPL_203/ZPL_300, DPL_203/DPL_300
   config.weight = '5'                 #=> weight in Kg of your package
   config.signed = false/true          #=> signed shipping label or not
-  config.internationnal = false/true  #=> international shipping label or not
+  config.international = false/true  #=> international shipping label or not
   config.raw_format = false/true      #=> if false, `label` method will return an array with ["label_in_raw_format", "tracking_number"] into
                                       #=> if true, `label` method will create label_file.pdf/zpl/dpl and return an array with ["tracking_number"] into
 end

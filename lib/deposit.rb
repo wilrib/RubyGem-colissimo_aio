@@ -3,7 +3,7 @@ module Deposit
 
     def initialize
       @client = Savon.client do |config|
-        config.wsdl ColissimoAIO.configuration.label
+        config.wsdl ColissimoAIO.configuration.label_url
         config.encoding 'UTF-8'
         config.ssl_version :TLSv1
         config.headers 'SOAPAction' => ''

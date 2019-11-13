@@ -3,7 +3,7 @@ module Label
 
     def initialize
       @client = Savon.client do |config|
-        config.wsdl ColissimoAIO.configuration.label
+        config.wsdl ColissimoAIO.configuration.label_url
         config.encoding 'UTF-8'
         config.ssl_version :TLSv1
         config.headers 'SOAPAction' => ''
@@ -21,6 +21,8 @@ module Label
       @signed = ColissimoAIO.configuration.signed
       @format = ColissimoAIO.configuration.format
       @international = ColissimoAIO.configuration.international
+      @raw_format = ColissimoAIO.configuration.raw_format
+      @local_path = ColissimoAIO.configuration.local_path
     end
 
     def generate_label(address_expeditor, output_format, service_forman, parcel_new, type)
@@ -77,9 +79,13 @@ module Label
       begin
         regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
         etiquette = parcel_number[regex]
-        etiquette_save(etiquette, colis_number, 'aller', @format)
-        return colis_number, etiquette
-      rescue => e
+        if @raw_format
+          return colis_number, etiquette
+        else
+          etiquette_save(etiquette, colis_number, 'aller', @format)
+          return colis_number
+        end
+      rescue StandardError => e
         raise e
       end
     end
@@ -108,9 +114,13 @@ module Label
       begin
         regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
         etiquette = parcel_number[regex]
-        etiquette_save(etiquette, colis_number, 'retour', @format)
-        return colis_number, etiquette
-      rescue => e
+        if @raw_format
+          return colis_number, etiquette
+        else
+          etiquette_save(etiquette, colis_number, 'retour', @format)
+          return colis_number
+        end
+      rescue StandardError => e
         raise e
       end
     end
@@ -135,9 +145,13 @@ module Label
       begin
         regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
         etiquette = parcel_number[regex]
-        etiquette_save(etiquette, colis_number, 'aller', @format)
-        return colis_number, etiquette
-      rescue => e
+        if @raw_format
+          return colis_number, etiquette
+        else
+          etiquette_save(etiquette, colis_number, 'aller', @format)
+          return colis_number
+        end
+      rescue StandardError => e
         raise e
       end
     end
