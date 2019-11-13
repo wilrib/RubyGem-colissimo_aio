@@ -62,7 +62,7 @@ You can create your object and follow all this example.
 # GENERATE DEPOSIT
 depositArray = %w(6C14365610897 8R41974798470 6C14363208744 8R41972000544)
 deposit = ColissimoAIO::DepositClass.new
-deposit.generateBordereauxByParcelNumbers(depositArray) #=> take an array of tracking number
+deposit.generate_deposit(depositArray) #=> take an array of tracking number
 #=> Create a Bordereau.pdf file in root folder of your project
 
 

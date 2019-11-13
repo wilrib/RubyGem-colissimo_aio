@@ -29,7 +29,7 @@ module ColissimoAIO
       @signed ||= false
       @international ||= false
       @raw_format ||= false
-      @local_path ||= Dir.pwd
+      @local_path ||= '/colissimo_label'
     end
   end
 end

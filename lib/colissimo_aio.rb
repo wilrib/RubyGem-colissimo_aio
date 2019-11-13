@@ -4,7 +4,9 @@ require 'deposit'
 require 'label'
 require 'tracking'
 require 'relay_point'
+require 'save'
 require 'ostruct'
+require 'fileutils'
 require 'savon'
 
 module ColissimoAIO
@@ -13,6 +15,8 @@ module ColissimoAIO
   include Label
   include Tracking
   include RelayPoint
+  include Save
+
 
   class << self
     attr_accessor :configuration
