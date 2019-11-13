@@ -3,7 +3,8 @@ module ColissimoAIO
     attr_accessor :account, :password, :weight, :company_name,
                   :address, :country_code, :city, :zip_code, :phone,
                   :email, :format, :dpl_203, :dpl_300, :zpl_203, :zpl_300,
-                  :pdf, :retrait, :label, :suivi, :signed, :internationnal, :raw_format
+                  :pdf, :relay_url, :label_url, :tracking_url, :signed,
+                  :international, :raw_format, :local_path
 
     def initialize
       @account = nil
@@ -22,12 +23,13 @@ module ColissimoAIO
       @zpl_203 = 'ZPL_10x15_203dpi'
       @zpl_300 = 'ZPL_10x15_300dpi'
       @pdf = 'PDF_A4_300dpi'
-      @retrait = 'https://ws.colissimo.fr/pointretrait-ws-cxf/PointRetraitServiceWS/2.0?wsdl'
-      @label = 'https://ws.colissimo.fr/sls-ws/SlsServiceWS?wsdl'
-      @suivi = 'https://www.coliposte.fr/tracking-chargeur-cxf/TrackingServiceWS?wsdl'
+      @relay_url = 'https://ws.colissimo.fr/pointretrait-ws-cxf/PointRetraitServiceWS/2.0?wsdl'
+      @label_url = 'https://ws.colissimo.fr/sls-ws/SlsServiceWS?wsdl'
+      @tracking_url = 'https://www.coliposte.fr/tracking-chargeur-cxf/TrackingServiceWS?wsdl'
       @signed ||= false
-      @internationnal ||= false
+      @international ||= false
       @raw_format ||= false
+      @local_path ||= '/colissimo_label'
     end
   end
 end

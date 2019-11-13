@@ -3,7 +3,7 @@ module Tracking
 
     def initialize
       @suivis = Savon.client do |config|
-        config.wsdl ColissimoAIO.configuration.suivi
+        config.wsdl ColissimoAIO.configuration.tracking_url
         config.encoding 'UTF-8'
         config.ssl_version :TLSv1
         config.headers 'SOAPAction' => ''
@@ -19,23 +19,10 @@ module Tracking
       rescue Savon::Error => soap_fault
         puts "Error: #{soap_fault}\n"
       end
-      case tracking.xpath('//errorCode').first.inner_text
-      when '0'
-        return tracking.xpath('//eventLibelle').first.inner_text, tracking.xpath('//eventDate').first.inner_text, tracking.xpath('//recipientCity').first.inner_text
-      when '1000'
-        raise StandardError, 'Erreur système (erreur technique)'
-      when '202'
-        raise StandardError, 'Service non autorisé pour cet identifiant'
-      when '201'
-        raise StandardError, 'Identifiant / mot de passe invalide'
-      when '105'
-        raise StandardError, 'Numéro de colis inconnu'
-      when '104'
-        raise StandardError, 'Numéro de colis hors plage client'
-      when '103'
-        raise StandardError, 'Numéro de colis datant de plus de 30 jours'
-      when '101'
-        raise StandardError, 'Numéro de colis invalide'
+      if tracking.xpath('//errorCode').first.inner_text != '0'
+        raise StandardError, tracking.xpath('//errorMessage')
+      else
+        [tracking.xpath('//eventLibelle').first.inner_text, tracking.xpath('//eventDate').first.inner_text, tracking.xpath('//recipientCity').first.inner_text]
       end
     end
   end

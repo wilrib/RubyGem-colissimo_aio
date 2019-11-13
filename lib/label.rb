@@ -3,7 +3,7 @@ module Label
 
     def initialize
       @client = Savon.client do |config|
-        config.wsdl ColissimoAIO.configuration.label
+        config.wsdl ColissimoAIO.configuration.label_url
         config.encoding 'UTF-8'
         config.ssl_version :TLSv1
         config.headers 'SOAPAction' => ''
@@ -20,11 +20,13 @@ module Label
       @label_weight = ColissimoAIO.configuration.weight
       @signed = ColissimoAIO.configuration.signed
       @format = ColissimoAIO.configuration.format
-      @internationnal = ColissimoAIO.configuration.internationnal
+      @international = ColissimoAIO.configuration.international
+      @raw_format = ColissimoAIO.configuration.raw_format
+      @local_path = ColissimoAIO.configuration.local_path
     end
 
-    def generate_label(address_expeditor, output_format, service_forman, parcel_new, type)
-      if type == 'retour'
+    def generate_label(address_expeditor, output_format, service_forman, parcel_new)
+      if caller_locations(1, 1)[0].label == 'return_label'
         @address_sender, address_expeditor = address_expeditor, @address_sender
       end
       response = { outputFormat: output_format,
@@ -53,114 +55,111 @@ module Label
       end
     end
 
-    def shipping_label(first_name, last_name, street, country, city, zip, phone, email)
-      address_expeditor = { lastName: first_name,
-                            firstName: last_name,
-                            line2: street, countryCode: country,
-                            city: city,
-                            zipCode: zip,
-                            mobileNumber: phone,
-                            email: email }
-      output_format = if @format == 'DPL_203'
-                        i = "\x02n"
-                        j = "E\r"
-                        { outputPrintingType: ColissimoAIO.configuration.dpl_203 }
-                      elsif @format == 'DPL_300'
-                        i = "\x02n"
-                        j = "E\r"
-                        { outputPrintingType: ColissimoAIO.configuration.dpl_300 }
-                      elsif @format == 'PDF'
-                        i = '%PDF-'
-                        j = '%%EOF'
-                        { outputPrintingType: ColissimoAIO.configuration.pdf }
-                      elsif @format == 'ZPL_203'
-                        i = '^XA'
-                        j = '^XZ'
-                        { outputPrintingType: ColissimoAIO.configuration.zpl_203 }
-                      elsif @format == 'ZPL_300'
-                        i = '^XA'
-                        j = '^XZ'
-                        { outputPrintingType: ColissimoAIO.configuration.zpl_300 }
-                      else
-                        raise ArgumentError, 'BAD FORMAT'
-                      end
+    def shipping_label(hash)
+      address_expeditor = { lastName: hash[:first_name],
+                            firstName: hash[:last_name],
+                            line2: hash[:street], countryCode: hash[:country],
+                            city: hash[:city],
+                            zipCode: hash[:zip],
+                            mobileNumber: hash[:phone],
+                            email: hash[:email] }
+      output_for = output
+      output_format = output_for[0]
+      i = output_for[1]
+      j = output_for[2]
       service_forman = if @signed
                          { productCode: 'DOS', depositDate: @depo_date }
                        else
                          { productCode: 'DOM', depositDate: @depo_date }
                        end
       weight = { weight: @label_weight }
-      response = generate_label(address_expeditor, output_format, service_forman, weight, 'aller')
+      response = generate_label(address_expeditor, output_format, service_forman, weight)
       parcel_number = response.to_s
       colis_number = parcel_number[/#{'<parcelNumber>'}(.*?)#{'</parcelNumber>'}/m, 1]
       begin
         regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
         etiquette = parcel_number[regex]
-        etiquette_save(etiquette, colis_number, 'aller', @format)
-        return colis_number, etiquette
-      rescue => e
+        if @raw_format
+          return colis_number, etiquette
+        else
+          save = Save::SaveClass.new(etiquette, colis_number, @format)
+          save.saving
+          return colis_number
+        end
+      rescue StandardError => e
         raise e
       end
     end
 
-    def return_label(first_name, last_name, street, country, city, zip, phone, email)
-      address_expeditor = { lastName: first_name,
-                            firstName: last_name,
-                            line2: street, countryCode: country,
-                            city: city,
-                            zipCode: zip,
-                            mobileNumber: phone,
-                            email: email }
-      output_format = if @format == 'DPL_203'
-                        i = "\x02n"
-                        j = "E\r"
-                        { outputPrintingType: ColissimoAIO.configuration.dpl_203 }
-                      elsif @format == 'DPL_300'
-                        i = "\x02n"
-                        j = "E\r"
-                        { outputPrintingType: ColissimoAIO.configuration.dpl_300 }
-                      elsif @format == 'PDF'
-                        i = '%PDF-'
-                        j = '%%EOF'
-                        { outputPrintingType: ColissimoAIO.configuration.pdf }
-                      elsif @format == 'ZPL_203'
-                        i = '^XA'
-                        j = '^XZ'
-                        { outputPrintingType: ColissimoAIO.configuration.zpl_203 }
-                      elsif @format == 'ZPL_300'
-                        i = '^XA'
-                        j = '^XZ'
-                        { outputPrintingType: ColissimoAIO.configuration.zpl_300 }
-                      else
-                        raise ArgumentError, 'BAD FORMAT'
-                      end
-      service_forman = if @internationnal
+    def return_label(hash)
+      address_expeditor = { lastName: hash[:first_name],
+                            firstName: hash[:last_name],
+                            line2: hash[:street], countryCode: hash[:country],
+                            city: hash[:city],
+                            zipCode: hash[:zip],
+                            mobileNumber: hash[:phone],
+                            email: hash[:email] }
+      output_for = output
+      output_format = output_for[0]
+      i = output_for[1]
+      j = output_for[2]
+      service_forman = if @international
                          { productCode: 'CORI', depositDate: @depo_date }
                        else
                          { productCode: 'CORE', depositDate: @depo_date }
                        end
       weight = { weight: @label_weight }
-      response = generate_label(address_expeditor, output_format, service_forman, weight, 'retour')
+      response = generate_label(address_expeditor, output_format, service_forman, weight)
       parcel_number = response.to_s
       colis_number = parcel_number[/#{'<parcelNumber>'}(.*?)#{'</parcelNumber>'}/m, 1]
       begin
         regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
         etiquette = parcel_number[regex]
-        etiquette_save(etiquette, colis_number, 'retour', @format)
-        return colis_number, etiquette
-      rescue => e
+        if @raw_format
+          return colis_number, etiquette
+        else
+          save = Save::SaveClass.new(etiquette, colis_number, @format)
+          save.saving
+          return colis_number
+        end
+      rescue StandardError => e
         raise e
       end
     end
 
-    def relay_point_label(first_name, last_name, street, country, city, zip, phone, email, relay_id)
-      address_expeditor = { lastName: first_name,
-                            firstName: last_name,
-                            line2: street, countryCode: country,
-                            city: city,
-                            zipCode: zip,
-                            mobileNumber: phone,
-                            email: email }
+    def relay_point_label(hash)
+      address_expeditor = { lastName: hash[:first_name],
+                            firstName: hash[:last_name],
+                            line2: hash[:street], countryCode: hash[:country],
+                            city: hash[:city],
+                            zipCode: hash[:zip],
+                            mobileNumber: hash[:phone],
+                            email: hash[:email] }
+      output_for = output
+      output_format = output_for[0]
+      i = output_for[1]
+      j = output_for[2]
+      service_forman = { productCode: 'BPR', depositDate: @depo_date }.merge(commercialName: ColissimoAIO.configuration.company_name)
+      weight = { weight: @label_weight }.merge(pickupLocationId: hash[:relay_id])
+      response = generate_label(address_expeditor, output_format, service_forman, weight)
+      parcel_number = response.to_s
+      colis_number = parcel_number[/#{'<parcelNumber>'}(.*?)#{'</parcelNumber>'}/m, 1]
+      begin
+        regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
+        etiquette = parcel_number[regex]
+        if @raw_format
+          return colis_number, etiquette
+        else
+          save = Save::SaveClass.new(etiquette, colis_number, @format)
+          save.saving
+          return colis_number
+        end
+      rescue StandardError => e
+        raise e
+      end
+    end
+
+    def output
       output_format = if @format == 'DPL_203'
                         i = "\x02n"
                         j = "E\r"
@@ -184,33 +183,7 @@ module Label
                       else
                         raise ArgumentError, 'BAD FORMAT'
                       end
-      service_forman = { productCode: 'BPR', depositDate: @depo_date }.merge(commercialName: ColissimoAIO.configuration.company_name)
-      weight = { weight: @label_weight }.merge(pickupLocationId: relay_id)
-      response = generate_label(address_expeditor, output_format, service_forman, weight, 'aller')
-      parcel_number = response.to_s
-      colis_number = parcel_number[/#{'<parcelNumber>'}(.*?)#{'</parcelNumber>'}/m, 1]
-      begin
-        regex = Regexp.new("#{Regexp.escape(i)}(.|\n)*#{Regexp.escape(j)}")
-        etiquette = parcel_number[regex]
-        etiquette_save(etiquette, colis_number, 'aller', @format)
-        return colis_number, etiquette
-      rescue => e
-        raise e
-      end
-    end
-
-    def etiquette_save(etiquette, colis_number, type, format)
-      if format.include?('DPL')
-        extension = 'dpl'
-      elsif format.include?('PDF')
-        etiquette = etiquette.force_encoding('UTF-8')
-        extension = 'pdf'
-      elsif format.include?('ZPL')
-        extension = 'zpl'
-      else
-        raise ArgumentError, 'BAD FORMAT'
-      end
-      File.open("#{type}_#{colis_number}.#{extension}", 'w+') { |file| file.write(etiquette) }
+      [output_format, i, j]
     end
   end
 end

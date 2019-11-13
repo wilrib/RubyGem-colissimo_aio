@@ -3,7 +3,7 @@ module RelayPoint
 
     def initialize
       @client = Savon.client do |config|
-        config.wsdl ColissimoAIO.configuration.retrait
+        config.wsdl ColissimoAIO.configuration.relay_url
         config.encoding 'UTF-8'
         config.ssl_version :TLSv1
         config.headers 'SOAPAction' => ''
@@ -12,8 +12,8 @@ module RelayPoint
                 password: ColissimoAIO.configuration.password }
     end
 
-    def find_relay_point_informations(retrait_id)
-      data = { id: retrait_id, date: DateTime.now.strftime('%d/%m/%Y') }
+    def find_relay_point_informations(relay_id)
+      data = { id: relay_id, date: DateTime.now.strftime('%d/%m/%Y') }
       begin
         response = @client.call :find_point_retrait_acheminement_by_id, message: @auth.merge(data) unless data.empty?
       rescue Savon::Error => soap_fault
