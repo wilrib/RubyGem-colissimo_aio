@@ -9,7 +9,7 @@ module Save
     end
 
     def saving
-      if caller_locations(1, 1)[0].label == 'generate_deposit'
+      if caller_locations(1, 1)[0].label == 'response_parsing'
         raw = @raw.force_encoding('UTF-8')
         basename = "BORDEREAU_#{@label_number}.pdf"
       else

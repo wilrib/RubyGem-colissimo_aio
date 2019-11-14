@@ -12,14 +12,29 @@ module Deposit
       @auth = { contractNumber: ColissimoAIO.configuration.account, password: ColissimoAIO.configuration.password }
     end
 
-    def generate_deposit(bordarray)
+    def generate_deposit_by_parcel(bordarray)
       response = { generateBordereauParcelNumberList: { parcelsNumbers: bordarray } }
       message_with_authentication = @auth.merge(response) unless response.empty?
       begin
         response = @client.call :generate_bordereau_by_parcels_numbers, message: message_with_authentication
-      rescue Savon::Error => soap_fault
-        puts "Error: #{soap_fault}\n"
+      rescue Savon::Error => e
+        puts "Error: #{e}\n"
       end
+      response_parsing(response)
+    end
+
+    def generate_deposit_by_id(id)
+      response = { bordereauNumber: id }
+      message_with_authentication = @auth.merge(response) unless response.empty?
+      begin
+        response = @client.call :get_bordereau_by_number, message: message_with_authentication
+      rescue Savon::Error => e
+        puts "Error: #{e}\n"
+      end
+      response_parsing(response)
+    end
+
+    def response_parsing(response)
       response_to_s = response.to_s
       if response_to_s[/#{'<id>'}(.*?)#{'</id>'}/m, 1] != '0'
         raise StandardError, (response_to_s[/#{'<messageContent>'}(.*?)#{'</messageContent>'}/m, 1]).to_s
