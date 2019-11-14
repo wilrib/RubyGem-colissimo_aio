@@ -4,7 +4,7 @@ module ColissimoAIO
                   :address, :country_code, :city, :zip_code, :phone,
                   :email, :format, :dpl_203, :dpl_300, :zpl_203, :zpl_300,
                   :pdf, :relay_url, :label_url, :tracking_url, :signed,
-                  :international, :raw_format, :local_path
+                  :international, :raw_format, :local_path, :date_time
 
     def initialize
       @account = nil
@@ -30,6 +30,7 @@ module ColissimoAIO
       @international ||= false
       @raw_format ||= false
       @local_path ||= '/colissimo_label'
+      @date_time ||= DateTime.now.strftime('%d-%m-%Y')
     end
   end
 end
