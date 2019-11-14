@@ -44,8 +44,8 @@ module Label
       message_with_authentication = @auth.merge(response) unless response.empty?
       begin
         response = @client.call :generate_label, message: { generateLabelRequest: message_with_authentication }
-      rescue Savon::Error => soap_fault
-        puts "Error: #{soap_fault}\n"
+      rescue Savon::Error => e
+        puts "Error: #{e}\n"
       end
       response_to_s = response.to_s
       if response_to_s[/#{'<id>'}(.*?)#{'</id>'}/m, 1] != '0'
@@ -103,7 +103,7 @@ module Label
       output_format = output_for[0]
       i = output_for[1]
       j = output_for[2]
-      service_forman = if @international
+      service_forman = if hash[:country] != 'FR'
                          { productCode: 'CORI', depositDate: @depo_date }
                        else
                          { productCode: 'CORE', depositDate: @depo_date }

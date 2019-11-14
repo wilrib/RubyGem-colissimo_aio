@@ -16,8 +16,8 @@ module RelayPoint
       data = { id: relay_id, date: DateTime.now.strftime('%d/%m/%Y') }
       begin
         response = @client.call :find_point_retrait_acheminement_by_id, message: @auth.merge(data) unless data.empty?
-      rescue Savon::Error => soap_fault
-        puts "Error: #{soap_fault}\n"
+      rescue Savon::Error => e
+        puts "Error: #{e}\n"
       end
       response_to_s = response.to_s
       if response_to_s[/#{'<errorCode>'}(.*?)#{'</errorCode>'}/m, 1] != '0'

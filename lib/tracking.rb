@@ -16,8 +16,8 @@ module Tracking
       data = { skybillNumber: skybillNumber }
       begin
         tracking = @suivis.call :track, message: @auth.merge(data) unless data.empty?
-      rescue Savon::Error => soap_fault
-        puts "Error: #{soap_fault}\n"
+      rescue Savon::Error => e
+        puts "Error: #{e}\n"
       end
       if tracking.xpath('//errorCode').first.inner_text != '0'
         raise StandardError, tracking.xpath('//errorMessage')
