@@ -14,6 +14,7 @@ ColissimoAIO.configure do |config|
   config.email = ENV['EMAIL']
   config.format = 'PDF'
   config.weight = '5'
+  config.date_time = DateTime.now.strftime('%d-%m-%Y')
   config.signed = false
   config.international = false
   config.raw_format = false
@@ -33,57 +34,56 @@ deposit.generate_deposit_by_id('290')
 
 
 ## INFO D'UN RELAY POINT
-#relay = ColissimoAIO::RelayPointClass.new
-#p relay.find_relay_point_informations('011430')
+relay = ColissimoAIO::RelayPointClass.new
+p relay.find_relay_point_informations('011430')
+
+
+## INFO D'UN RELAY POINT
+relay = ColissimoAIO::RelayPointClass.new
+p relay.find_nearest_relay_point(address: '12 Rue de la Roquette', zipCode: '75001',
+                                 city: 'Paris', countryCode: 'FR')
 
 
 ## TRACKING INFORMATIONS
-#tracking = ColissimoAIO::TrackingClass.new
-#p tracking.track('6C14365610897')
+tracking = ColissimoAIO::TrackingClass.new
+tracking.track('6C14365610897')
 
 
 # ETIQUETTE ALLER
-#shipping = ColissimoAIO::LabelClass.new
-#p shipping.shipping_label(first_name: 'Axel',
-#                          last_name: 'XELA',
-#                          street: '20 rue des Sables',
-#                          country: 'BE',
-#                          city: 'Bruxelles',
-#                          zip: '1000',
-#                          phone: '+32475871902',
-#                          email: 'test@gmail.com')
+shipping = ColissimoAIO::LabelClass.new
+shipping.shipping_label(first_name: 'Axel',
+                          last_name: 'XELA',
+                          street: '20 rue des Sables',
+                          country: 'BE',
+                          city: 'Bruxelles',
+                          zip: '1000',
+                          phone: '+32475871902',
+                          email: 'test@gmail.com')
 
 
 # ETIQUETTE RETOUR
-#returnLabel = ColissimoAIO::LabelClass.new
-#p returnLabel.return_label(first_name: 'Axel',
-#                           last_name: 'XELA',
-#                           street: '20 rue des Sables',
-#                           country: 'BE',
-#                           city: 'Bruxelles',
-#                           zip: '1000',
-#                           phone: '+32475871902',
-#                           email: 'test@gmail.com')
+returnLabel = ColissimoAIO::LabelClass.new
+returnLabel.return_label(first_name: 'Axel',
+                           last_name: 'XELA',
+                           street: '20 rue des Sables',
+                           country: 'BE',
+                           city: 'Bruxelles',
+                           zip: '1000',
+                           phone: '+32475871902',
+                           email: 'test@gmail.com')
 
 # ETIQUETTE ALLER RELAY POINT
-#relay = ColissimoAIO::LabelClass.new
-#relay.relay_point_label(first_name: 'Axel',
-#                        last_name: 'XELA',
-#                        street: '12 Rue de la Roquette',
-#                        country: 'FR',
-#                        city: 'Paris',
-#                        zip: '75001',
-#                        phone: '0660066006',
-#                        email: 'test@gmail.com',
-#                        relay_id: '011430')
+relay = ColissimoAIO::LabelClass.new
+relay.relay_point_label(first_name: 'Axel',
+                        last_name: 'XELA',
+                        street: '12 Rue de la Roquette',
+                        country: 'FR',
+                        city: 'Paris',
+                        zip: '75001',
+                        phone: '0660066006',
+                        email: 'test@gmail.com',
+                        relay_id: '011430')
 
-
-
-#HTTP.post(service_url,
-#          json: {
-#              "contractNumber": ColissimoLabel.contract_number,
-#              "password":       ColissimoLabel.contract_password,
-#              "outputFormat":   {
 
 #20, rue des Sables 1000 Bruxelles Belgique, +32 (0)2 219 19 80
 #

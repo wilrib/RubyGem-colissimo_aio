@@ -65,7 +65,13 @@ You can create your object and follow all this example.
 array = %w(6C14365610897 8R41974798470 6C14363208744 8R41972000544)
 deposit = ColissimoAIO::DepositClass.new
 deposit.generate_deposit_by_parcel(array) #=> take an array of tracking number
-#=> Create a Bordereau.pdf file in root folder of your project
+#=> Create a Bordereau.pdf file in `/colissimo_label`
+
+
+# REGENERATE DEPOSIT PREVIOUSLY GENERATED (BY ID)
+deposit = ColissimoAIO::DepositClass.new
+deposit.generate_deposit_by_id('290')
+#=> Create a Bordereau.pdf file in `/colissimo_label`
 
 
 # RELAY POINT INFORMATIONS
@@ -74,10 +80,17 @@ relay.find_relay_point_informations('011430')
 #=> Return string with all informations about a Relay Point
 
 
+# INFO D'UN RELAY POINT
+relay = ColissimoAIO::RelayPointClass.new
+relay.find_nearest_relay_point(address: '12 Rue de la Roquette', zipCode: '75001',
+                                 city: 'Paris', countryCode: 'FR') 
+#=> Return string with all Relay Point near specified address
+
+
 # TRACKING INFORMATION
 tracking = ColissimoAIO::TrackingClass.new
 tracking.track('6C14365610897')
-#=> Return the last state of the tracking number
+#=> Return an Array with the last state of the tracking number
 
  
 # GENERATING LOCAL SHIPPING LABEL
