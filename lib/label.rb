@@ -16,7 +16,7 @@ module Label
                           zipCode: ColissimoAIO.configuration.zip_code,
                           mobileNumber: ColissimoAIO.configuration.phone,
                           email: ColissimoAIO.configuration.email }
-      @depo_date = Date.parse(ColissimoAIO.configuration.date_time).strftime('%Y-%m-%d')
+      @depo_date = Date.parse(ColissimoAIO.configuration.date).strftime('%Y-%m-%d')
       @label_weight = ColissimoAIO.configuration.weight
       @signed = ColissimoAIO.configuration.signed
       @format = ColissimoAIO.configuration.format

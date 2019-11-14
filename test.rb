@@ -14,7 +14,7 @@ ColissimoAIO.configure do |config|
   config.email = ENV['EMAIL']
   config.format = 'PDF'
   config.weight = '5'
-  config.date_time = DateTime.now.strftime('%d-%m-%Y')
+  config.date = DateTime.now.strftime('%d-%m-%Y')
   config.signed = false
   config.international = false
   config.raw_format = false

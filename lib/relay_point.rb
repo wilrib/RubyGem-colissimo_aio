@@ -11,7 +11,7 @@ module RelayPoint
       @auth = { accountNumber: ColissimoAIO.configuration.account,
                 password: ColissimoAIO.configuration.password }
       @weight = ColissimoAIO.configuration.weight
-      @date_time = Date.parse(ColissimoAIO.configuration.date_time).strftime('%d/%m/%Y')
+      @date_time = Date.parse(ColissimoAIO.configuration.date).strftime('%d/%m/%Y')
     end
 
     def find_relay_point_informations(relay_id)

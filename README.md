@@ -4,9 +4,11 @@ This is an unofficial Ruby Gem that allow you to:
 - Generate Colissimo `Shipping_Label` in different format (DPL, ZPL and PDF) (only france actually)
 - Generate Colissimo `Return_Label` in different format (DPL, ZPL and PDF) (only france actually)
 - Generate `Relay_Point_Label` in different format (DPL, ZPL and PDF) (only france actually)
-- Generate Deposit file Colissimo in PDF
+- Generate `Deposit` file Colissimo in PDF
+- ReGenerate `Deposit` file Colissimo in PDF form his ID
 - Tracking information (Colissimo allow only to return the last tracking information)
 - Return all informations about a Relay Point from his ID (address, opening hour, etc)
+- Return all closest Relay Point from giving address
 
 TODO:
 - Generate Colissimo Label to other country `(in progress)`
@@ -31,7 +33,7 @@ Or install it yourself as:
 
 #### First :
 
-You have to configure Colissimo Gem with your colissimo account, compagny information, and specific information about generated label.
+You have to configure Colissimo Gem with your colissimo account, company information, and specific information about generated label.
 
 ```ruby
 ColissimoAIO.configure do |config|
@@ -52,6 +54,7 @@ ColissimoAIO.configure do |config|
                                                     #=> if true, `label` method will create label_file.pdf/zpl/dpl and return an array with ["tracking_number"] into
   config.local_path = File.join('public',
                                 'colissimo_file')   #=> Specify the storage folder
+  config.date = DateTime.now.strftime('%d-%m-%Y')   #=> Specify Date (14-11-2019)
 end
 ```
 
@@ -60,6 +63,8 @@ end
 
 You can create your object and follow all this example.
 ###### In `test.rb` file, have example, quite same as following
+
+##Generate Deposit Label (bordereau.pdf) part:
 ```ruby
 # GENERATE DEPOSIT
 array = %w(6C14365610897 8R41974798470 6C14363208744 8R41972000544)
@@ -72,30 +77,36 @@ deposit.generate_deposit_by_parcel(array) #=> take an array of tracking number
 deposit = ColissimoAIO::DepositClass.new
 deposit.generate_deposit_by_id('290')
 #=> Create a Bordereau.pdf file in `/colissimo_label`
+```
 
-
-# RELAY POINT INFORMATIONS
+##Relay Point Informations part:
+```ruby
+# RELAY POINT INFORMATIONS FORM HIS ID
 relay = ColissimoAIO::RelayPointClass.new
 relay.find_relay_point_informations('011430')
 #=> Return string with all informations about a Relay Point
 
 
-# INFO D'UN RELAY POINT
+# FIND ALL CLOSEST RELAY POINT FROM GIVING ADDRESS
 relay = ColissimoAIO::RelayPointClass.new
 relay.find_nearest_relay_point(address: '12 Rue de la Roquette', zipCode: '75001',
                                  city: 'Paris', countryCode: 'FR') 
-#=> Return string with all Relay Point near specified address
+#=> Return all Relay Points closest to a given address
+```
 
-
-# TRACKING INFORMATION
+##Tracking Informations part:
+```ruby
+# TRACKING INFORMATION FROM TRACKING NUMBER
 tracking = ColissimoAIO::TrackingClass.new
 tracking.track('6C14365610897')
 #=> Return an Array with the last state of the tracking number
-
+```
  
+##Generate Label part:
+```ruby
 # GENERATING LOCAL SHIPPING LABEL
-shipping = ColissimoAIO::LabelClass.new
-shipping.shipping_label(first_name: 'Axel',
+label = ColissimoAIO::LabelClass.new
+label.shipping_label(first_name: 'Axel',
                         last_name: 'XELA',
                         street: '12 Rue de la Roquette',
                         country: 'FR',
@@ -107,8 +118,8 @@ shipping.shipping_label(first_name: 'Axel',
 
 
 # GENERATING RETURN SHIPPING LABEL
-returnLabel = ColissimoAIO::LabelClass.new
-returnLabel.return_label(first_name: 'Axel',
+label = ColissimoAIO::LabelClass.new
+label.return_label(first_name: 'Axel',
                          last_name: 'XELA',
                          street: '12 Rue de la Roquette',
                          country: 'FR',
@@ -120,8 +131,8 @@ returnLabel.return_label(first_name: 'Axel',
 
 
 # GENERATING RELAY POINT SHIPPING LABEL
-relay = ColissimoAIO::LabelClass.new
-relay.relay_point_label(first_name: 'Axel',
+label = ColissimoAIO::LabelClass.new
+label.relay_point_label(first_name: 'Axel',
                         last_name: 'XELA',
                         street: '12 Rue de la Roquette',
                         country: 'FR',
