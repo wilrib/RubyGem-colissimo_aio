@@ -14,11 +14,13 @@ module Save
         basename = "BORDEREAU_#{@label_number}.pdf"
       else
         if @format.include?('DPL')
+          raw = @raw
           extension = 'dpl'
         elsif @format.include?('PDF')
           raw = @raw.force_encoding('UTF-8')
           extension = 'pdf'
         elsif @format.include?('ZPL')
+          raw = @raw
           extension = 'zpl'
         else
           raise ArgumentError, 'BAD FORMAT'
@@ -31,7 +33,7 @@ module Save
         when 'relay_point_label'
           basename = "RELAY_#{@label_number}.#{extension}"
         else
-          # type code here
+          raise StandardError, 'BAD METHOD'
         end
       end
       dirname = File.join(Dir.pwd, @local_path)
