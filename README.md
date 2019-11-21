@@ -64,7 +64,7 @@ end
 You can create your object and follow all this example.
 ###### In `test.rb` file, have example, quite same as following
 
-##Generate Deposit Label (bordereau.pdf) part:
+## Generate Deposit Label (bordereau.pdf) part:
 ```ruby
 # GENERATE DEPOSIT
 array = %w(6C14365610897 8R41974798470 6C14363208744 8R41972000544)
@@ -79,7 +79,7 @@ deposit.generate_deposit_by_id('290')
 #=> Create a Bordereau.pdf file in `/colissimo_label`
 ```
 
-##Relay Point Informations part:
+## Relay Point Informations part:
 ```ruby
 # RELAY POINT INFORMATIONS FORM HIS ID
 relay = ColissimoAIO::RelayPointClass.new
@@ -94,7 +94,7 @@ relay.find_nearest_relay_point(address: '12 Rue de la Roquette', zipCode: '75001
 #=> Return all Relay Points closest to a given address
 ```
 
-##Tracking Informations part:
+## Tracking Informations part:
 ```ruby
 # TRACKING INFORMATION FROM TRACKING NUMBER
 tracking = ColissimoAIO::TrackingClass.new
@@ -102,7 +102,7 @@ tracking.track('6C14365610897')
 #=> Return an Array with the last state of the tracking number
 ```
  
-##Generate Label part:
+## Generate Label part:
 ```ruby
 # GENERATING LOCAL SHIPPING LABEL
 label = ColissimoAIO::LabelClass.new
