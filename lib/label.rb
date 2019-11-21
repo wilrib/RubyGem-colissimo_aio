@@ -99,13 +99,17 @@ module Label
                             zipCode: hash[:zip],
                             mobileNumber: hash[:phone],
                             email: hash[:email] }
-      output_for = output
-      output_format = output_for[0]
-      i = output_for[1]
-      j = output_for[2]
       service_forman = if hash[:country] != 'FR'
+                         i = '%PDF-'
+                         j = '%%EOF'
+                         output_format = { outputPrintingType: ColissimoAIO.configuration.pdf }
+                         @format = 'PDF_A4_300dpi'
                          { productCode: 'CORI', depositDate: @depo_date }
                        else
+                         output_for = output
+                         output_format = output_for[0]
+                         i = output_for[1]
+                         j = output_for[2]
                          { productCode: 'CORE', depositDate: @depo_date }
                        end
       weight = { weight: @label_weight }

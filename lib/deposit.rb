@@ -9,6 +9,7 @@ module Deposit
         config.headers 'SOAPAction' => ''
       end
       @local_path = ColissimoAIO.configuration.local_path
+      @raw_format = ColissimoAIO.configuration.raw_format
       @auth = { contractNumber: ColissimoAIO.configuration.account, password: ColissimoAIO.configuration.password }
     end
 
@@ -39,11 +40,20 @@ module Deposit
       if response_to_s[/#{'<id>'}(.*?)#{'</id>'}/m, 1] != '0'
         raise StandardError, (response_to_s[/#{'<messageContent>'}(.*?)#{'</messageContent>'}/m, 1]).to_s
       else
-        response_body = response.http.body
-        deposit_number = (response_to_s[/#{'<bordereauNumber>'}(.*?)#{'</bordereauNumber>'}/m, 1]).to_s
-        final = response_body[/#{"%PDF-"}(.*)#{"%%EOF"}/m].force_encoding('UTF-8')
-        save = Save::SaveClass.new(final, deposit_number, nil)
-        save.saving
+        begin
+          response_body = response.http.body
+          final = response_body[/#{"%PDF-"}(.*)#{"%%EOF"}/m]
+          deposit_number = (response_to_s[/#{'<bordereauNumber>'}(.*?)#{'</bordereauNumber>'}/m, 1]).to_s
+          if @raw_format
+            return deposit_number, final
+          else
+            save = Save::SaveClass.new(final, deposit_number, nil)
+            save.saving
+            return deposit_number
+          end
+        rescue StandardError => e
+          raise e
+        end
       end
     end
   end

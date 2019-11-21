@@ -1,17 +1,18 @@
 # Colissimo
 
 This is an unofficial Ruby Gem that allow you to:
-- Generate Colissimo `Shipping_Label` in different format (DPL, ZPL and PDF) (only france actually)
-- Generate Colissimo `Return_Label` in different format (DPL, ZPL and PDF) (only france actually)
-- Generate `Relay_Point_Label` in different format (DPL, ZPL and PDF) (only france actually)
+- Generate Colissimo `Shipping_Label` in different format (DPL, ZPL and PDF) (France, Belgium, Royaume-Uni, Luxembourg)
+- Generate Colissimo `Return_Label` in different format (DPL, ZPL and PDF) (France, Belgium, Royaume-Uni, Luxembourg)
+- Generate `Relay_Point_Label` in different format (DPL, ZPL and PDF) (ONLY France)
 - Generate `Deposit` file Colissimo in PDF
-- ReGenerate `Deposit` file Colissimo in PDF form his ID
+- ReGenerate `Deposit` file Colissimo in PDF from an ID
 - Tracking information (Colissimo allow only to return the last tracking information)
-- Return all informations about a Relay Point from his ID (address, opening hour, etc)
-- Return all closest Relay Point from giving address
+- Return all information about a Relay Point from his ID (address, opening hour, etc) (ONLY France)
+- Return all closest Relay Point from giving address (ONLY France)
 
-TODO:
-- Generate Colissimo Label to other country `(in progress)`
+###### TODO:
+- ###### Generate International Shipping_Label / Return_Label `(in progress)`
+- ###### Generate International Relay_Point_Label `(in progress)`
 
 ## Installation
 
@@ -34,6 +35,8 @@ Or install it yourself as:
 #### First :
 
 You have to configure Colissimo Gem with your colissimo account, company information, and specific information about generated label.
+
+###### You can put this configuration on your `config/initializers` folder
 
 ```ruby
 ColissimoAIO.configure do |config|
@@ -62,7 +65,7 @@ end
 #### Next :
 
 You can create your object and follow all this example.
-###### In `test.rb` file, have example, quite same as following
+###### In `test.rb` file, have examples, quite same as following
 
 ## Generate Deposit Label (bordereau.pdf) part:
 ```ruby
@@ -158,6 +161,9 @@ https://www.colissimo.entreprise.laposte.fr/system/files/imagescontent/docs/spec
 - `config.raw_format` : if `false`, `label` method will return an array with ["label_in_raw_format", "tracking_number"] into, else `label` method will create label_file.pdf/zpl/dpl in root folder and return an array with ["tracking_number"] into
 - `config.local_path` : you can specify here the local storage of all files generated `File.join('public', 'colissimo_file') # Rails.root.join('public', 'colissimo_file')`
 
+- `Shipping_Label` / `Return_Label` / `Relay_Point_Label` methods accept FR/BE/LU/GB country
+
+- `Relay_Point_Label` method is only available in France
 
 ## Contributing
 

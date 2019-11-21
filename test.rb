@@ -15,7 +15,7 @@ ColissimoAIO.configure do |config|
   config.format = 'PDF'
   config.weight = '5'
   config.date = DateTime.now.strftime('%d-%m-%Y')
-  config.signed = false
+  config.signed = true
   config.international = false
   config.raw_format = false
   config.local_path = File.join('public', 'colissimo_file') # Rails.root.join('public', 'colissimo_file')
@@ -35,23 +35,63 @@ deposit.generate_deposit_by_id('290')
 
 ## INFO D'UN RELAY POINT
 relay = ColissimoAIO::RelayPointClass.new
-p relay.find_relay_point_informations('011430')
+relay.find_relay_point_informations('011430')
 
 
 ## INFO D'UN RELAY POINT
 relay = ColissimoAIO::RelayPointClass.new
-p relay.find_nearest_relay_point(address: '12 Rue de la Roquette', zipCode: '75001',
+relay.find_nearest_relay_point(address: '12 Rue de la Roquette', zipCode: '75001',
                                  city: 'Paris', countryCode: 'FR')
 
 
 ## TRACKING INFORMATIONS
 tracking = ColissimoAIO::TrackingClass.new
-tracking.track('6C14365610897')
+p tracking.track('6C14365610897')
 
-
+puts "================"
+puts "LABEL FRANCE"
+puts "================"
 # ETIQUETTE ALLER
 shipping = ColissimoAIO::LabelClass.new
-shipping.shipping_label(first_name: 'Axel',
+p shipping.shipping_label(first_name: 'Axel',
+                          last_name: 'XELA',
+                          street: '12 Rue de la Roquette',
+                          country: 'FR',
+                          city: 'Paris',
+                          zip: '75001',
+                          phone: '0660066006',
+                          email: 'test@gmail.com')
+
+
+# ETIQUETTE RETOUR
+returnLabel = ColissimoAIO::LabelClass.new
+p returnLabel.return_label(first_name: 'Axel',
+                           last_name: 'XELA',
+                           street: '12 Rue de la Roquette',
+                           country: 'FR',
+                           city: 'Paris',
+                           zip: '75001',
+                           phone: '0660066006',
+                           email: 'test@gmail.com')
+
+# ETIQUETTE ALLER RELAY POINT
+relay = ColissimoAIO::LabelClass.new
+p relay.relay_point_label(first_name: 'Axel',
+                        last_name: 'XELA',
+                        street: '12 Rue de la Roquette',
+                        country: 'FR',
+                        city: 'Paris',
+                        zip: '75001',
+                        phone: '0660066006',
+                        email: 'test@gmail.com',
+                        relay_id: '011430')
+
+puts "================"
+puts "ETIQUETTE BELGIQUE"
+puts "================"
+# ETIQUETTE ALLER
+shipping = ColissimoAIO::LabelClass.new
+p shipping.shipping_label(first_name: 'Axel',
                           last_name: 'XELA',
                           street: '20 rue des Sables',
                           country: 'BE',
@@ -63,7 +103,7 @@ shipping.shipping_label(first_name: 'Axel',
 
 # ETIQUETTE RETOUR
 returnLabel = ColissimoAIO::LabelClass.new
-returnLabel.return_label(first_name: 'Axel',
+p returnLabel.return_label(first_name: 'Axel',
                            last_name: 'XELA',
                            street: '20 rue des Sables',
                            country: 'BE',
@@ -72,23 +112,80 @@ returnLabel.return_label(first_name: 'Axel',
                            phone: '+32475871902',
                            email: 'test@gmail.com')
 
-# ETIQUETTE ALLER RELAY POINT
-relay = ColissimoAIO::LabelClass.new
-relay.relay_point_label(first_name: 'Axel',
-                        last_name: 'XELA',
-                        street: '12 Rue de la Roquette',
-                        country: 'FR',
-                        city: 'Paris',
-                        zip: '75001',
-                        phone: '0660066006',
-                        email: 'test@gmail.com',
-                        relay_id: '011430')
+puts "================"
+puts "LABEL LUXEMBOURG"
+puts "================"
+# ETIQUETTE ALLER
+shipping = ColissimoAIO::LabelClass.new
+p shipping.shipping_label(first_name: 'Axel',
+                          last_name: 'XELA',
+                          street: '32 Rue Notre-Dame',
+                          country: 'LU',
+                          city: 'Luxembourg',
+                          zip: '2240',
+                          phone: '+35227858468',
+                          email: 'test@gmail.com')
 
 
-#20, rue des Sables 1000 Bruxelles Belgique, +32 (0)2 219 19 80
-#
-#32 Rue Notre-Dame, 2240 Luxembourg Luxembourg, +352 27 85 84 68
-#
-#127 Ledbury Road, W11 2AQ Londres Angleterre, +44 20 7792 9090
-#
-# Rue du 31 Décembre 32, 1207 Genève, Suisse, +41 22 736 32 32
+# ETIQUETTE RETOUR
+returnLabel = ColissimoAIO::LabelClass.new
+p returnLabel.return_label(first_name: 'Axel',
+                           last_name: 'XELA',
+                           street: '32 Rue Notre-Dame',
+                           country: 'LU',
+                           city: 'Luxembourg',
+                           zip: '2240',
+                           phone: '+35227858468',
+                           email: 'test@gmail.com')
+
+puts "================"
+puts "LABEL ANGLETERRE"
+puts "================"
+# ETIQUETTE ALLER
+shipping = ColissimoAIO::LabelClass.new
+p shipping.shipping_label(first_name: 'Axel',
+                          last_name: 'XELA',
+                          street: '127 Ledbury Road',
+                          country: 'GB',
+                          city: 'London',
+                          zip: 'W11 2AQ',
+                          phone: '+442077929090',
+                          email: 'test@gmail.com')
+
+
+# ETIQUETTE RETOUR
+returnLabel = ColissimoAIO::LabelClass.new
+p returnLabel.return_label(first_name: 'Axel',
+                           last_name: 'XELA',
+                           street: '127 Ledbury Road',
+                           country: 'GB',
+                           city: 'London',
+                           zip: 'W11 2AQ',
+                           phone: '+442077929090',
+                           email: 'test@gmail.com')
+
+puts "================"
+puts "LABEL SUISSE"
+puts "================"
+# ETIQUETTE ALLER
+shipping = ColissimoAIO::LabelClass.new
+p shipping.shipping_label(first_name: 'Axel',
+                          last_name: 'XELA',
+                          street: 'Rue du 31 Décembre 32',
+                          country: 'CH',
+                          city: 'Genève',
+                          zip: '1207',
+                          phone: '+41227363232',
+                          email: 'test@gmail.com')
+
+
+# ETIQUETTE RETOUR
+returnLabel = ColissimoAIO::LabelClass.new
+p returnLabel.return_label(first_name: 'Axel',
+                           last_name: 'XELA',
+                           street: 'Rue du 31 Décembre 32',
+                           country: 'CH',
+                           city: 'Genève',
+                           zip: '1207',
+                           phone: '+41227363232',
+                           email: 'test@gmail.com')
